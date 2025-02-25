@@ -33,6 +33,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -62,7 +63,7 @@ fun AddressScreen(
 ) {
     val uiState by remember {
         viewModel.uiState
-    }.collectAsStateWithLifecycle(AddressUiState.Idle)
+    }.collectAsState(AddressUiState.Idle)
 
     Column(
         modifier = Modifier
@@ -72,48 +73,59 @@ fun AddressScreen(
         HeaderTop(title = "لیست آدرس ها") {
             backPressed.invoke()
         }
-
-        when (uiState) {
-            AddressUiState.EmptyList -> {
-                EmptyStateBox()
-            }
-
-            AddressUiState.Idle -> {
-                viewModel.loadAddress()
-            }
-
-            is AddressUiState.LoadFailed -> {
-                val error = (uiState as AddressUiState.LoadFailed).errorMessage
-                showError.invoke(error)
-                TryAgainBox {
-                    viewModel.loadAddress()
-                }
-            }
-
-            is AddressUiState.LoadSuccess -> {
-                val addressList = (uiState as AddressUiState.LoadSuccess).addressList
-                ListOfAddressBox(addressList)
-            }
-
-            AddressUiState.Loading -> {
-                LoadingBox()
-            }
-
-            is AddressUiState.NoInternet -> {
-                val error = (uiState as AddressUiState.NoInternet).error
-                showError.invoke(error)
-                TryAgainBox {
-                    viewModel.loadAddress()
-                }
-            }
-        }
-
+        AddressScreenContent(
+            viewModel,
+            uiState,
+            showError = { e -> showError.invoke(e) }
+        )
     }
+
 }
 
 
 @Composable
-fun LoadingBox() {
+private fun AddressScreenContent(
+    viewModel: AddressViewModel,
+    uiState: AddressUiState,
+    showError: (errorMessageList: List<String>) -> Unit
+) {
+    when (uiState) {
+        AddressUiState.EmptyList -> {
+            EmptyStateBox()
+        }
+
+        AddressUiState.Idle -> {
+        }
+
+        is AddressUiState.LoadFailed -> {
+            val error = uiState.errorMessage
+            showError.invoke(error)
+            TryAgainBox {
+                viewModel.loadAddress()
+            }
+        }
+
+        is AddressUiState.LoadSuccess -> {
+            val addressList = uiState.addressList
+            ListOfAddressBox(addressList)
+        }
+
+        AddressUiState.Loading -> {
+            LoadingBox()
+        }
+
+        is AddressUiState.NoInternet -> {
+            val error = uiState.error
+            showError.invoke(error)
+            TryAgainBox {
+                viewModel.loadAddress()
+            }
+        }
+    }
+}
+
+@Composable
+private fun LoadingBox() {
     Box(
         modifier = Modifier.fillMaxSize(),
         contentAlignment = Alignment.Center
@@ -123,7 +135,7 @@ fun LoadingBox() {
 }
 
 @Composable
-fun EmptyStateBox() {
+private fun EmptyStateBox() {
     Box(
         modifier = Modifier.fillMaxSize(),
         contentAlignment = Alignment.Center
@@ -134,7 +146,7 @@ fun EmptyStateBox() {
 
 
 @Composable
-fun TryAgainBox(
+private fun TryAgainBox(
     buttonClicked: () -> Unit
 ) {
     Box(
@@ -157,7 +169,7 @@ fun TryAgainBox(
 
 
 @Composable
-fun ListOfAddressBox(addressList: List<AddressItem>) {
+private fun ListOfAddressBox(addressList: List<AddressItem>) {
     Box(
         modifier = Modifier.fillMaxSize(),
         contentAlignment = Alignment.Center
@@ -177,7 +189,7 @@ fun ListOfAddressBox(addressList: List<AddressItem>) {
 }
 
 @Composable
-fun AddressCard(
+private fun AddressCard(
     address: String,
     fullName: String,
     mobile: String

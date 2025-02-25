@@ -15,6 +15,7 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -53,15 +54,9 @@ fun MapScreen(
     showError: (errorMessageList: List<String>) -> Unit
 ) {
     val uiState = viewModel.uiState.collectAsStateWithLifecycle(initialValue = MapUiState.Idle)
+
     var showLoadingSubmitButton by remember {
         mutableStateOf(false)
-    }
-    var startAnimation by remember {
-        mutableStateOf(false)
-    }
-
-    LaunchedEffect(key1 = startAnimation) {
-        startAnimation = true
     }
 
     LaunchedEffect(key1 = uiState.value) {
@@ -69,9 +64,7 @@ fun MapScreen(
             showLoadingSubmitButton = false
         }
         when (uiState.value) {
-            MapUiState.Idle -> {
-
-            }
+            MapUiState.Idle -> {}
 
             MapUiState.Loading -> {
                 showLoadingSubmitButton = true
@@ -95,6 +88,30 @@ fun MapScreen(
         }
     }
 
+    MapScreenContent(viewModel, onBackPressed, showLoadingSubmitButton)
+}
+
+
+@Composable
+private fun MapScreenContent(
+    viewModel: MapViewModel,
+    onBackPressed: () -> Unit,
+    showLoadingSubmitButton: Boolean
+) {
+
+    var startAnimation by remember {
+        mutableStateOf(false)
+    }
+    var buttonText = remember {
+        derivedStateOf {
+            if (showLoadingSubmitButton) "لطفا صبر کنید"
+            else "تایید موقعیت"
+        }
+    }
+
+    LaunchedEffect(key1 = startAnimation) {
+        startAnimation = true
+    }
 
     val coroutineScope = rememberCoroutineScope()
     val cameraPositionState = rememberCameraPositionState {
@@ -156,8 +173,7 @@ fun MapScreen(
             },
             enabled = showLoadingSubmitButton.not()
         ) {
-            if (showLoadingSubmitButton) Text(text = "لطفا صبر کنید", fontSize = 18.sp)
-            else Text(text = "تایید موقعیت", fontSize = 18.sp)
+            Text(text = buttonText.value, fontSize = 18.sp)
         }
     }
 }

@@ -20,6 +20,7 @@ import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 
 
@@ -37,12 +38,13 @@ class AddressViewModel(
     private val addressRepository: AddressRepository
 ) : ViewModel() {
 
-    private val _uiState = Channel<AddressUiState>()
-    val uiState = _uiState.receiveAsFlow()
-
     init {
         loadAddress()
     }
+
+    private val _uiState = Channel<AddressUiState>()
+    val uiState = _uiState.receiveAsFlow()
+
 
     fun loadAddress() = viewModelScope.launch(Dispatchers.IO) {
         if (networkChecker.isNetworkAvailable().not()) {

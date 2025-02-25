@@ -52,10 +52,12 @@ android {
 
 dependencies {
     implementation(libs.ktor.android)
-    implementation(libs.ktor.auth)
+//    implementation(libs.ktor.auth)
     implementation(libs.ktor.logging)
     implementation(libs.ktor.serialize)
-    implementation(libs.kotlinx.serialize)
+//    implementation(libs.kotlinx.serialize)
+    implementation(libs.ktor.client.negotiation)
+    implementation(libs.ktor.gson)
 
     implementation(libs.androidx.cookiebar2)
     implementation(libs.androidx.gson)

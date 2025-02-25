@@ -97,7 +97,13 @@ fun FormScreen(
         }
     }
 
+    FormScreenContent(viewModel)
+}
 
+@Composable
+private fun FormScreenContent(
+    viewModel: FormViewModel
+) {
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -141,7 +147,7 @@ fun FormScreen(
                 false,
                 ValidationRegexes.LAST_NAME
             ) {
-                viewModel.formBody.last_name=it
+                viewModel.formBody.last_name = it
             }
             FormFiled(
                 viewModel.formBody.coordinate_mobile.orEmpty(),
@@ -322,7 +328,7 @@ private fun FormFiled(
 }
 
 @Composable
-fun FormToggleGender(
+private fun FormToggleGender(
     defaultValueIsMan: Boolean,
     onValueChange: (isMan: Boolean) -> Unit
 ) {

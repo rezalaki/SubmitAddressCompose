@@ -30,7 +30,7 @@ class MapViewModel(
     private val addressRepository: AddressRepository
 ) : ViewModel() {
 
-    private val _uiState = Channel<MapUiState>(Channel.BUFFERED)
+    private val _uiState = Channel<MapUiState>()
     val uiState = _uiState.receiveAsFlow()
 
     fun getLatLng() = formRequestBody.getLatLng()

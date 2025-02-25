@@ -18,7 +18,7 @@ sealed class FormUiState {
 class FormViewModel : ViewModel() {
     var formBody = SubmitAddressRequestBody()
 
-    private val _uiState = Channel<FormUiState>(Channel.BUFFERED)
+    private val _uiState = Channel<FormUiState>()
     val uiState = _uiState.receiveAsFlow()
 
     fun submit() = viewModelScope.launch(Dispatchers.IO) {

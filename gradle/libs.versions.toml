@@ -16,11 +16,13 @@ lifecycleRuntimeCompose = "2.7.0"
 cookiebar = "1.1.5"
 gson = "2.12.1"
 
-ktorClientAndroid="1.5.0"
-ktorClientSerialization="1.5.0"
-ktorClientLogging="1.5.0"
-ktorAuth="1.5.0"
-kotlinxSerializationJson="1.6.3"
+ktorClientAndroid="2.3.13"
+ktorClientSerialization="2.3.13"
+ktorClientLogging="2.3.13"
+#ktorAuth="2.3.13"
+ktorClientContentNegotiation="2.3.13"
+ktorGson="2.3.13"
+#kotlinxSerializationJson="1.6.3"
 
 
 [libraries]
@@ -52,10 +54,11 @@ androidx-gson = { group = "com.google.code.gson", name = "gson", version.ref = "
 
 ktor-android = { group = "io.ktor", name = "ktor-client-android", version.ref = "ktorClientAndroid" }
 ktor-serialize = { group = "io.ktor", name = "ktor-client-serialization", version.ref = "ktorClientSerialization" }
-ktor-auth = { group = "io.ktor", name = "ktor-client-auth", version.ref = "ktorAuth" }
+#ktor-auth = { group = "io.ktor", name = "ktor-client-auth", version.ref = "ktorAuth" }
 ktor-logging = { group = "io.ktor", name = "ktor-client-logging-jvm", version.ref = "ktorClientLogging" }
-kotlinx-serialize = { group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-json", version.ref = "kotlinxSerializationJson" }
-
+#kotlinx-serialize = { group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-json", version.ref = "kotlinxSerializationJson" }
+ktor-client-negotiation = { group = "io.ktor", name = "ktor-client-content-negotiation", version.ref = "ktorClientContentNegotiation" }
+ktor-gson = { group = "io.ktor", name = "ktor-serialization-gson", version.ref = "ktorGson" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

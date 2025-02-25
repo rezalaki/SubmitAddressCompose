@@ -6,11 +6,8 @@ import com.google.errorprone.annotations.Keep
 import com.rezalaki.registeraddresscompose.utils.Constants
 import com.rezalaki.registeraddresscompose.utils.ValidationRegexes
 import kotlinx.serialization.SerialName
-import kotlinx.serialization.Serializable
-import kotlin.math.ln
 
 @Keep
-@Serializable
 data class SubmitAddressRequestBody(
     @SerialName("region") var region: Int = 1,
     @SerialName("address") var address: String? = null,

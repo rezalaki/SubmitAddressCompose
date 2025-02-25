@@ -1,26 +1,24 @@
 package com.rezalaki.registeraddresscompose.di
 
+
 import android.util.Log
 import com.rezalaki.registeraddresscompose.utils.Constants
+import com.rezalaki.registeraddresscompose.utils.extensions.unescapeUnicode
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.android.Android
-import io.ktor.client.features.DefaultRequest
-import io.ktor.client.features.auth.Auth
-import io.ktor.client.features.auth.providers.basic
-import io.ktor.client.features.defaultRequest
-import io.ktor.client.features.json.JsonFeature
-import io.ktor.client.features.json.serializer.KotlinxSerializer
-import io.ktor.client.features.logging.LogLevel
-import io.ktor.client.features.logging.Logger
-import io.ktor.client.features.logging.Logging
-import io.ktor.client.features.observer.ResponseObserver
+import io.ktor.client.plugins.DefaultRequest
+import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
+import io.ktor.client.plugins.defaultRequest
+import io.ktor.client.plugins.logging.LogLevel
+import io.ktor.client.plugins.logging.Logger
+import io.ktor.client.plugins.logging.Logging
+import io.ktor.client.plugins.observer.ResponseObserver
 import io.ktor.client.request.header
-import io.ktor.client.request.host
-import io.ktor.client.request.url
+import io.ktor.client.request.headers
 import io.ktor.http.ContentType
 import io.ktor.http.HttpHeaders
 import io.ktor.http.URLProtocol
-import java.util.Base64
+import io.ktor.serialization.gson.gson
 import kotlin.io.encoding.ExperimentalEncodingApi
 
 
@@ -31,13 +29,17 @@ val ktorHttpClient = HttpClient(Android) {
         url {
             protocol = URLProtocol.HTTPS
         }
+        headers {
+            header("Accept", "application/json")
+            header("content-type", "application/json")
+        }
     }
-    install(JsonFeature) {
-        serializer = KotlinxSerializer(kotlinx.serialization.json.Json {
-            prettyPrint = true
-            isLenient = true
-            ignoreUnknownKeys = true
-        })
+    install(ContentNegotiation) {
+        gson {
+            setPrettyPrinting()
+            setLenient()
+            serializeNulls()
+        }
     }
     engine {
         connectTimeout = Constants.TIME_OUT
@@ -46,7 +48,10 @@ val ktorHttpClient = HttpClient(Android) {
     install(Logging) {
         logger = object : Logger {
             override fun log(message: String) {
-                Log.d("SERVER LOG", message)
+                Log.d(
+                    "SERVER",
+                    message.unescapeUnicode()
+                )
             }
         }
         level = LogLevel.ALL
@@ -56,7 +61,8 @@ val ktorHttpClient = HttpClient(Android) {
             Log.d("SERVER RSP", "${response.status.value}")
         }
     }
-    install(DefaultRequest) {
+
+    install(DefaultRequest){
         header(HttpHeaders.ContentType, ContentType.Application.Json)
         val username = "09822222222"
         val password = "Sana12345678"
@@ -64,4 +70,5 @@ val ktorHttpClient = HttpClient(Android) {
         val encodedCredentials = kotlin.io.encoding.Base64.encode(credentials.toByteArray())
         header("Authorization", "Basic $encodedCredentials")
     }
+
 }
